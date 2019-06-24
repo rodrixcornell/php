@@ -13,7 +13,7 @@ export LC_ALL=C.UTF-8 \
 && LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php \
 && LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/apache2 \
 && apt-get install -yq --no-install-recommends php$PHP_VERSION-{bcmath,curl,gd,json,mbstring,mysql,sqlite*,xml,zip} apache2 libapache2-mod-php$PHP_VERSION libaio1 curl alien make php$PHP_VERSION-dev \
-&& a2dismod mpm_event && a2enmod mpm_prefork && service apache2 restart \
+&& a2dismod mpm_event && a2enmod mpm_prefork && a2enmod rewrite && service apache2 restart \
 \
 && alien --scripts --install /tmp/oracle*rpm && apt-get install -f -y --no-install-recommends \
 \
