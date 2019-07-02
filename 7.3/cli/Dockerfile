@@ -1,6 +1,6 @@
 #
 #
-#
+# ubuntu:18.04
 
 ARG DISTRIBUTION=ubuntu
 ARG CODENAME=18.04
