@@ -32,49 +32,49 @@ IMAGE_NAME="rodrixcornell/php:$(echo $php_version | cut -c1-3)"
 IMAGE_BUILD="--build-arg php_version=${php_version} --build-arg variant=${variant} --build-arg codename=${codename} --build-arg release=${release} --build-arg distribution=${distribution}"
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-cli-buster \
---tag $IMAGE_NAME-cli \
---tag $IMAGE_NAME-buster \
---tag $IMAGE_NAME \
+--tag $IMAGE_NAME-${variant}-buster \
+--tag $IMAGE_NAME-${variant} \
+--tag rodrixcornell/php:${variant}-buster \
+--tag rodrixcornell/php:${variant} \
 --file Dockerfile .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-mysql-cli-buster \
---tag $IMAGE_NAME-mysql-cli \
---tag $IMAGE_NAME-mysql-buster \
---tag $IMAGE_NAME-mysql \
+--tag $IMAGE_NAME-mysql-${variant}-buster \
+--tag $IMAGE_NAME-mysql-${variant} \
+--tag rodrixcornell/php:mysql-${variant}-buster \
+--tag rodrixcornell/php:mysql-${variant} \
 --file Dockerfile.mysql .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-oci-cli-buster \
---tag $IMAGE_NAME-oci-cli \
---tag $IMAGE_NAME-oci-buster \
---tag $IMAGE_NAME-oci \
+--tag $IMAGE_NAME-oci-${variant}-buster \
+--tag $IMAGE_NAME-oci-${variant} \
+--tag rodrixcornell/php:oci-${variant}-buster \
+--tag rodrixcornell/php:oci-${variant} \
 --file Dockerfile.oracle .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-pgsql-cli-buster \
---tag $IMAGE_NAME-pgsql-cli \
---tag $IMAGE_NAME-pgsql-buster \
---tag $IMAGE_NAME-pgsql \
+--tag $IMAGE_NAME-pgsql-${variant}-buster \
+--tag $IMAGE_NAME-pgsql-${variant} \
+--tag rodrixcornell/php:pgsql-${variant}-buster \
+--tag rodrixcornell/php:pgsql-${variant} \
 --file Dockerfile.pgsql .
 
-docker push $IMAGE_NAME-cli-buster && \
-docker push $IMAGE_NAME-cli && \
-docker push $IMAGE_NAME-buster && \
-docker push $IMAGE_NAME
+docker push $IMAGE_NAME-${variant}-buster && \
+docker push $IMAGE_NAME-${variant} && \
+docker push rodrixcornell/php:${variant}-buster && \
+docker push rodrixcornell/php:${variant}
 
-docker push $IMAGE_NAME-mysql-cli-buster && \
-docker push $IMAGE_NAME-mysql-cli && \
-docker push $IMAGE_NAME-mysql-buster && \
-docker push $IMAGE_NAME-mysql
+docker push $IMAGE_NAME-mysql-${variant}-buster && \
+docker push $IMAGE_NAME-mysql-${variant}
+docker push rodrixcornell/php:mysql-${variant}-buster && \
+docker push rodrixcornell/php:mysql-${variant}
 
-docker push $IMAGE_NAME-oci-cli-buster && \
-docker push $IMAGE_NAME-oci-cli && \
-docker push $IMAGE_NAME-oci-buster && \
-docker push $IMAGE_NAME-oci
+docker push $IMAGE_NAME-oci-${variant}-buster && \
+docker push $IMAGE_NAME-oci-${variant}
+docker push rodrixcornell/php:oci-${variant}-buster && \
+docker push rodrixcornell/php:oci-${variant}
 
-docker push $IMAGE_NAME-pgsql-cli-buster && \
-docker push $IMAGE_NAME-pgsql-cli && \
-docker push $IMAGE_NAME-pgsql-buster && \
-docker push $IMAGE_NAME-pgsql
+docker push $IMAGE_NAME-pgsql-${variant}-buster && \
+docker push $IMAGE_NAME-pgsql-${variant}
+docker push rodrixcornell/php:pgsql-${variant}-buster && \
+docker push rodrixcornell/php:pgsql-${variant}
