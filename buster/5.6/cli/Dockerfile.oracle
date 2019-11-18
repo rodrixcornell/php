@@ -1,0 +1,70 @@
+
+ARG distribution=""
+ARG release=""
+ARG codename=""
+ARG variant=""
+ARG php_version=""
+
+FROM php:${php_version:+${php_version}-}${variant:+${variant}-}${codename:+${codename}}
+
+MAINTAINER Rodrigo Cabral <rodrixcornell@gmail.com.br>
+
+ARG ORACLE_LATEST=12.1
+
+ENV TIMEZONE="America/Manaus" \
+	LC_ALL="C.UTF-8" \
+	LANG="pt_BR.utf8" \
+	LANGUAGE="pt_BR:pt" \
+	ORACLE_INSTANTCLIENT=$ORACLE_LATEST\
+	ORACLE_RPM="oracle-instantclient*rpm" \
+	ORACLE_BASE=/usr/lib/oracle \
+	ORACLE_HOME=/usr/lib/oracle/$ORACLE_LATEST/client64 \
+	LD_LIBRARY_PATH=/usr/lib/oracle/$ORACLE_LATEST/client64/lib \
+	NLS_TERRITORY=BRAZIL \
+	NLS_LANG="BRAZILIAN PORTUGUESE_BRAZIL.UTF8" \
+	NLS_LANGUAGE="BRAZILIAN PORTUGUESE" \
+	NLS_CHARACTERSET=UTF8 \
+	NLS_NCHAR_CHARACTERSET=AL32UTF8 \
+	NLS_CURRENCY="R$" \
+	NLS_NUMERIC_CHARACTERS=".," \
+	NLS_SORT=WEST_EUROPEAN_AI \
+	NLS_COMP=BINARY \
+	NLS_DATE_FORMAT="RRRR-MM-DD HH24:MI:SS" \
+	NLS_TIMESTAMP_FORMAT="RRRR-MM-DD HH24:MI:SS.FF"
+
+ADD $ORACLE_RPM /tmp/
+
+RUN set -xe \
+	&& echo $TIMEZONE | tee /etc/timezone \
+	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends \
+	&& apt-get install -y --no-install-recommends locales software-properties-common \
+	&& localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
+	&& locale-gen pt_BR.UTF-8 \
+	&& apt-get install -y --no-install-recommends \
+		libfreetype6-dev \
+		libjpeg62-turbo-dev \
+		libpng-dev \
+		libaio1 alien \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& alien --scripts --install /tmp/oracle*rpm && apt-get install -f -y --no-install-recommends \
+	&& export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/include/oracle/$ORACLE_INSTANTCLIENT/client64 \
+	&& export PATH=$ORACLE_HOME/bin:$PATH && echo $PATH \
+	&& echo $ORACLE_HOME"/lib" | tee /etc/ld.so.conf.d/oracle.conf && ldconfig \
+	\
+	&& docker-php-source extract \
+	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+	&& docker-php-ext-configure oci8 --with-oci8=instantclient \
+	&& docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr,$ORACLE_LATEST \
+	&& docker-php-ext-install -j$(nproc) gd bcmath exif oci8 pdo_oci \
+	&& docker-php-ext-enable gd bcmath exif oci8 pdo_oci \
+	&& docker-php-source delete \
+	&& apt-get purge -y alien oracle-instantclient$ORACLE_INSTANTCLIENT-devel locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/oracle* /usr/lib/python3 \
+	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
+# Use the default production configuration
+# RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# Override with custom oci8 settings
+# COPY config/oci8.ini $PHP_INI_DIR/conf.d/
+# COPY config/pdo_oci.ini $PHP_INI_DIR/conf.d/
+
