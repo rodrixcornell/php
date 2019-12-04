@@ -47,7 +47,7 @@ RUN yum install -y centos-release-scl centos-release-scl-rh && \
     INSTALL_PKGS="rh-php56 rh-php56-php rh-php56-php-mysqlnd rh-php56-php-pgsql rh-php56-php-bcmath \
                   rh-php56-php-gd rh-php56-php-intl rh-php56-php-ldap rh-php56-php-mbstring rh-php56-php-pdo \
                   rh-php56-php-pecl-memcache rh-php56-php-process rh-php56-php-soap rh-php56-php-opcache rh-php56-php-xml \
-                  rh-php56-php-pecl-xdebug rh-php56-php-gmp httpd24-mod_ssl rh-php56-php-devel" && \
+                  rh-php56-php-pecl-xdebug rh-php56-php-gmp httpd24-mod_ssl" && \
     yum install -y --setopt=tsflags=nodocs --enablerepo=centosplus --enablerepo=centos-sclo-rh-testing $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum -y clean all --enablerepo='*'
@@ -72,7 +72,8 @@ ENV ORACLE_INSTANTCLIENT=$ORACLE_LATEST \
     NLS_DATE_FORMAT="RRRR-MM-DD HH24:MI:SS" \
     NLS_TIMESTAMP_FORMAT="RRRR-MM-DD HH24:MI:SS.FF"
 
-RUN yum localinstall -y /tmp/oracle*rpm && \
+RUN yum install -y --setopt=tsflags=nodocs --enablerepo=centosplus --enablerepo=centos-sclo-rh-testing rh-php56-php-devel && \
+    rpm -V rh-php56-php-devel && yum localinstall -y /tmp/oracle*rpm && \
     export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/include/oracle/$ORACLE_INSTANTCLIENT/client64 && \
     export PATH=$ORACLE_HOME/bin:$PATH && echo $PATH && \
     echo $ORACLE_HOME"/lib" | tee /etc/ld.so.conf.d/oracle.conf && ldconfig && \
@@ -99,7 +100,8 @@ RUN yum localinstall -y /tmp/oracle*rpm && \
     echo "; priority=20"; \
     echo "extension=pdo_oci.so"; \
     } | tee /etc/opt/rh/rh-php${PHP_VER_SHORT}/php.d/pdo_oci.ini && \
-    php -i | grep -i oci
+    php -i | grep -i oci && \
+    yum -y clean all --enablerepo='*'
 
 ENV PHP_CONTAINER_SCRIPTS_PATH=/usr/share/container-scripts/php/ \
     APP_DATA=${APP_ROOT}/src \

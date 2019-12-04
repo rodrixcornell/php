@@ -16,8 +16,9 @@ ENV TIMEZONE="America/Manaus" \
 
 RUN set -xe \
 	&& echo $TIMEZONE | tee /etc/timezone \
+	&& curl -#L https://getcomposer.org/composer.phar -o '/usr/local/bin/composer' && chmod +x /usr/local/bin/composer \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends \
-	&& apt-get install -y --no-install-recommends locales software-properties-common \
+	&& apt-get install -y --no-install-recommends git locales software-properties-common \
 	&& localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
 	&& locale-gen pt_BR.UTF-8 \
 	&& apt-get install -y --no-install-recommends \
