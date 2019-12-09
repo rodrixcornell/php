@@ -22,6 +22,7 @@ RUN set -xe \
 	&& localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
 	&& locale-gen pt_BR.UTF-8 \
 	&& apt-get install -y --no-install-recommends \
+		libicu-dev \
 		libfreetype6-dev \
 		libjpeg62-turbo-dev \
 		libpng-dev \
@@ -29,8 +30,8 @@ RUN set -xe \
 	\
 	&& docker-php-source extract \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-	&& docker-php-ext-install -j$(nproc) gd bcmath exif \
-	&& docker-php-ext-enable gd bcmath exif \
+	&& docker-php-ext-install -j$(nproc) gd bcmath exif intl \
+	&& docker-php-ext-enable gd bcmath exif intl \
 	&& docker-php-source delete \
 	&& apt-get purge -y locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /usr/lib/python3 \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
