@@ -5,6 +5,10 @@ echo -e "buildDocker.sh\r";
 
 export $(egrep -v '^#' .env | xargs)
 
+IMAGE_NAME="rodrixcornell/php:$(echo $php_version | cut -c1-3)"
+
+IMAGE_BUILD="--build-arg php_version=${php_version} --build-arg variant=${variant} --build-arg codename=${codename} --build-arg release=${release} --build-arg distribution=${distribution}"
+
 # Proxy settings
 PROXY_SETTINGS=""
 if [ "${http_proxy}" != "" ]; then
@@ -26,10 +30,6 @@ fi
 if [ "$PROXY_SETTINGS" != "" ]; then
   echo "Proxy settings were found and will be used during the build."
 fi
-
-IMAGE_NAME="rodrixcornell/php:$(echo $php_version | cut -c1-3)"
-
-IMAGE_BUILD="--build-arg php_version=${php_version} --build-arg variant=${variant} --build-arg codename=${codename} --build-arg release=${release} --build-arg distribution=${distribution}"
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
 --tag $IMAGE_NAME-${variant}-buster \
