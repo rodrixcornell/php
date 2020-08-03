@@ -15,8 +15,8 @@ ENV TIMEZONE="America/Manaus" \
 	LANGUAGE="pt_BR:pt"
 
 RUN set -xe \
+	&& a2enmod rewrite \
 	&& echo $TIMEZONE | tee /etc/timezone \
-	&& curl -#L https://getcomposer.org/composer.phar -o '/usr/local/bin/composer' && chmod +x /usr/local/bin/composer \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends \
 	&& apt-get install -y --no-install-recommends git locales software-properties-common \
 	&& localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
@@ -40,7 +40,9 @@ RUN set -xe \
 	&& docker-php-ext-configure pgsql --with-pgsql=/usr/include/ \
 	&& docker-php-ext-configure pdo_pgsql --with-pdo-pgsql=/usr/include/ \
 	&& docker-php-ext-install -j$(nproc) gd bcmath exif zip bz2 intl pgsql pdo_pgsql \
-	&& docker-php-ext-enable gd bcmath exif zip bz2 intl pgsql pdo_pgsql \
+	&& pecl install redis \
+	&& docker-php-ext-enable gd bcmath exif zip bz2 intl redis pgsql pdo_pgsql \
+	&& pecl clear-cache \
 	&& docker-php-source delete \
 	&& apt-get purge -y locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /usr/lib/python3 \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
