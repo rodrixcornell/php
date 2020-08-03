@@ -35,8 +35,8 @@ ENV TIMEZONE="America/Manaus" \
 ADD $ORACLE_RPM /tmp/
 
 RUN set -xe \
+	&& a2enmod rewrite \
 	&& echo $TIMEZONE | tee /etc/timezone \
-	&& curl -#L https://getcomposer.org/composer.phar -o '/usr/local/bin/composer' && chmod +x /usr/local/bin/composer \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends \
 	&& apt-get install -y --no-install-recommends git locales software-properties-common \
 	&& localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8 \
@@ -58,14 +58,16 @@ RUN set -xe \
 	&& echo $ORACLE_HOME"/lib" | tee /etc/ld.so.conf.d/oracle.conf && ldconfig \
 	\
 	&& docker-php-source extract \
-	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-	&& docker-php-ext-configure zip --with-libzip=/usr/include/ \
-	&& docker-php-ext-configure bz2 --with-bz2=/usr/include/ \
+	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+	&& docker-php-ext-configure zip \
+	&& docker-php-ext-configure bz2 --with-bz2 \
 	&& docker-php-ext-configure intl \
 	&& docker-php-ext-configure oci8 --with-oci8=instantclient \
 	&& docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,$LD_LIBRARY_PATH \
 	&& docker-php-ext-install -j$(nproc) gd bcmath exif zip bz2 intl oci8 pdo_oci \
-	&& docker-php-ext-enable gd bcmath exif zip bz2 intl oci8 pdo_oci \
+	&& pecl install redis \
+	&& docker-php-ext-enable gd bcmath exif zip bz2 intl redis oci8 pdo_oci \
+	&& pecl clear-cache \
 	&& docker-php-source delete \
 	&& apt-get purge -y alien oracle-instantclient$ORACLE_INSTANTCLIENT-devel locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/oracle* /usr/lib/python3 \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
