@@ -40,7 +40,8 @@ RUN set -xe \
 	&& docker-php-ext-configure pdo_pgsql --with-pdo-pgsql=/usr/include/ \
 	&& docker-php-ext-install -j$(nproc) gd bcmath exif zip bz2 intl pgsql pdo_pgsql \
 	&& pecl install redis \
-	&& docker-php-ext-enable gd bcmath exif zip bz2 intl redis pgsql pdo_pgsql \
+	&& pecl install swoole \
+	&& docker-php-ext-enable gd bcmath exif zip bz2 intl swoole redis pgsql pdo_pgsql \
 	&& pecl clear-cache \
 	&& docker-php-source delete \
 	&& apt-get purge -y locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /usr/lib/python3 \
