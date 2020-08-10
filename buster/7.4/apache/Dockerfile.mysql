@@ -15,7 +15,7 @@ ENV TIMEZONE="America/Manaus" \
 	LANGUAGE="pt_BR:pt"
 
 RUN set -xe \
-	&& a2enmod rewrite \
+	&& a2enmod rewrite headers ssl expires \
 	&& echo $TIMEZONE | tee /etc/timezone \
 	&& apt-get update -y && apt-get upgrade -yq --no-install-recommends \
 	&& apt-get install -y --no-install-recommends git locales software-properties-common \

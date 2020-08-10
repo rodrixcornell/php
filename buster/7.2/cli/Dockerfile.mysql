@@ -37,7 +37,8 @@ RUN set -xe \
 	&& docker-php-ext-configure intl \
 	&& docker-php-ext-install -j$(nproc) gd bcmath exif zip bz2 intl mysqli pdo_mysql \
 	&& pecl install redis \
-	&& docker-php-ext-enable gd bcmath exif zip bz2 intl redis mysqli pdo_mysql \
+	&& pecl install swoole \
+	&& docker-php-ext-enable gd bcmath exif zip bz2 intl swoole redis mysqli pdo_mysql \
 	&& pecl clear-cache \
 	&& docker-php-source delete \
 	&& apt-get purge -y locales software-properties-common && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && rm -rf /usr/lib/python3 \
