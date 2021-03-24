@@ -1,6 +1,5 @@
 # Enforce Unix newlines
 * text=lf
-
 # Exclude unused files
 # see: https://redd.it/2jzp6k
 /example            export-ignore
@@ -16,7 +15,5 @@
 /phpcs.xml          export-ignore
 /phpunit.xml.dist   export-ignore
 
-*rpm binary -diff -merge -text
-*zip binary -diff -merge -text
-# *rpm filter=lfs diff=lfs merge=lfs binary -text
-# *zip filter=lfs diff=lfs merge=lfs binary -text
+*.rpm filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text

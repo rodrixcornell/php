@@ -35,7 +35,7 @@ NLS_TIMESTAMP_FORMAT="RRRR-MM-DD HH24:MI:SS.FF"
 
 RUN set -xe \
 && cd /tmp/ \
-&& ORACLE_RPM="https://github.com/rodrixcornell/php/blob/master/oracle-instantclient" \
+&& ORACLE_RPM="https://media.githubusercontent.com/media/rodrixcornell/php/master/oracle-instantclient" \
 && curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-basiclite-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-basiclite.rpm \
 && curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-devel-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-devel.rpm \
 && echo $TIMEZONE | tee /etc/timezone \
