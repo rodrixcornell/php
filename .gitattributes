@@ -16,5 +16,7 @@
 /phpcs.xml          export-ignore
 /phpunit.xml.dist   export-ignore
 
-*rpm filter=lfs diff=lfs merge=lfs binary -text
-*zip filter=lfs diff=lfs merge=lfs binary -text
+*rpm binary -diff -merge -text
+*zip binary -diff -merge -text
+# *rpm filter=lfs diff=lfs merge=lfs binary -text
+# *zip filter=lfs diff=lfs merge=lfs binary -text
