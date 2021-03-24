@@ -34,10 +34,6 @@ NLS_DATE_FORMAT="RRRR-MM-DD HH24:MI:SS" \
 NLS_TIMESTAMP_FORMAT="RRRR-MM-DD HH24:MI:SS.FF"
 
 RUN set -xe \
-&& cd /tmp/ \
-&& ORACLE_RPM="https://media.githubusercontent.com/media/rodrixcornell/php/master/oracle-instantclient" \
-&& curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-basiclite-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-basiclite.rpm \
-&& curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-devel-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-devel.rpm \
 && echo $TIMEZONE | tee /etc/timezone \
 && apt-get update -y && apt-get upgrade -yq --no-install-recommends \
 && apt-get install -y --no-install-recommends git locales software-properties-common \
@@ -54,6 +50,10 @@ libicu-dev \
 libaio1 alien \
 && rm -rf /var/lib/apt/lists/* \
 \
+&& cd /tmp/ \
+&& ORACLE_RPM="https://media.githubusercontent.com/media/rodrixcornell/oracle-instantclient/main" \
+&& curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-basiclite-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-basiclite.rpm \
+&& curl -ksSL $ORACLE_RPM/oracle-instantclient$ORACLE_LATEST-devel-$ORACLE_VERSION.x86_64.rpm --output oracle-instantclient-devel.rpm \
 && alien --scripts --install /tmp/oracle*rpm && apt-get install -f -y --no-install-recommends \
 && export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/include/oracle/$ORACLE_INSTANTCLIENT/client64 \
 && export PATH=$ORACLE_HOME/bin:$PATH && echo $PATH \
