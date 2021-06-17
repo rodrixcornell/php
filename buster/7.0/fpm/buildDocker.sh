@@ -46,18 +46,18 @@ docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
 --file Dockerfile.mysql .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-oci-${variant}-${codename} \
---tag $IMAGE_NAME-oci-${variant} \
---tag rodrixcornell/php:oci-${variant}-${codename} \
---tag rodrixcornell/php:oci-${variant} \
---file Dockerfile.oracle .
-
-docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
 --tag $IMAGE_NAME-pgsql-${variant}-${codename} \
 --tag $IMAGE_NAME-pgsql-${variant} \
 --tag rodrixcornell/php:pgsql-${variant}-${codename} \
 --tag rodrixcornell/php:pgsql-${variant} \
 --file Dockerfile.pgsql .
+
+docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
+--tag $IMAGE_NAME-oci-${variant}-${codename} \
+--tag $IMAGE_NAME-oci-${variant} \
+--tag rodrixcornell/php:oci-${variant}-${codename} \
+--tag rodrixcornell/php:oci-${variant} \
+--file Dockerfile.oracle .
 
 docker push $IMAGE_NAME-${variant}-${codename} && \
 docker push $IMAGE_NAME-${variant} && \
@@ -69,12 +69,12 @@ docker push $IMAGE_NAME-mysql-${variant}
 docker push rodrixcornell/php:mysql-${variant}-${codename} && \
 docker push rodrixcornell/php:mysql-${variant}
 
-docker push $IMAGE_NAME-oci-${variant}-${codename} && \
-docker push $IMAGE_NAME-oci-${variant}
-docker push rodrixcornell/php:oci-${variant}-${codename} && \
-docker push rodrixcornell/php:oci-${variant}
-
 docker push $IMAGE_NAME-pgsql-${variant}-${codename} && \
 docker push $IMAGE_NAME-pgsql-${variant}
 docker push rodrixcornell/php:pgsql-${variant}-${codename} && \
 docker push rodrixcornell/php:pgsql-${variant}
+
+docker push $IMAGE_NAME-oci-${variant}-${codename} && \
+docker push $IMAGE_NAME-oci-${variant}
+docker push rodrixcornell/php:oci-${variant}-${codename} && \
+docker push rodrixcornell/php:oci-${variant}

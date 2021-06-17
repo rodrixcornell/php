@@ -1,0 +1,75 @@
+
+ARG distribution=""
+ARG variant=""
+ARG php_version=""
+
+FROM php:${php_version:+${php_version}-}${variant:+${variant}-}${distribution:+${distribution}}
+
+MAINTAINER Rodrigo Cabral <rodrixcornell@gmail.com.br>
+
+ENV TZ="America/Manaus" \
+ORACLE_BASE=/opt/oracle/instantclient_12_1 \
+ORACLE_HOME=/opt/oracle/instantclient_12_1 \
+NLS_TERRITORY=BRAZIL \
+NLS_LANG="BRAZILIAN PORTUGUESE_BRAZIL.UTF8" \
+NLS_LANGUAGE="BRAZILIAN PORTUGUESE" \
+NLS_CHARACTERSET=UTF8 \
+NLS_NCHAR_CHARACTERSET=AL32UTF8 \
+NLS_CURRENCY="R$" \
+NLS_NUMERIC_CHARACTERS=".," \
+NLS_SORT=WEST_EUROPEAN_AI \
+NLS_COMP=BINARY \
+NLS_DATE_FORMAT="RRRR-MM-DD HH24:MI:SS" \
+NLS_TIMESTAMP_FORMAT="RRRR-MM-DD HH24:MI:SS.FF"
+
+RUN set -xe \
+&& apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+freetype-dev \
+libjpeg-turbo-dev \
+libpng-dev \
+libzip-dev \
+icu-dev \
+libc6-compat \
+libnsl \
+libaio \
+git \
+tzdata \
+&& echo $TZ > /etc/timezone \
+&& cp -rf /usr/share/zoneinfo/$TZ /etc/localtime \
+&& date \
+&& mkdir -p /opt/oracle \
+&& cd /opt/oracle \
+&& ORACLE_GITHUB="https://raw.githubusercontent.com/rodrixcornell/oracle-instantclient/main" \
+&& curl -ksSL ${ORACLE_GITHUB}/instantclient-basiclite-linux.x64-12.1.0.2.0.zip --output basiclite.zip \
+&& curl -ksSL ${ORACLE_GITHUB}/instantclient-sdk-linux.x64-12.1.0.2.0.zip --output sdk.zip \
+&& curl -ksSL ${ORACLE_GITHUB}/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip --output sqlplus.zip \
+&& unzip basiclite.zip -d /opt/oracle/ \
+&& unzip sdk.zip -d /opt/oracle/ \
+&& unzip sqlplus.zip -d /opt/oracle/ \
+&& rm -rf oracle-instantclient-*.zip \
+&& ln -s ${ORACLE_HOME}/libclntshcore.so.12.1 ${ORACLE_HOME}/libclntshcore.so \
+&& ln -s ${ORACLE_HOME}/libclntsh.so.12.1 ${ORACLE_HOME}/libclntsh.so \
+&& ln -s ${ORACLE_HOME}/libocci.so.12.1 ${ORACLE_HOME}/libocci.so \
+&& ln -s ${ORACLE_HOME}/sqlplus /usr/bin/sqlplus \
+&& ln -s /usr/lib/libnsl.so.2 /usr/lib/libnsl.so.1 \
+&& ln -s /lib64/ld-linux-x86-64.so.2 /usr/lib/ld-linux-x86-64.so.2 \
+&& export LD_LIBRARY_PATH=${ORACLE_HOME}:${LD_LIBRARY_PATH} \
+&& export C_INCLUDE_PATH=${ORACLE_HOME}:${C_INCLUDE_PATH} \
+&& export PATH=${ORACLE_HOME}:${PATH} && echo $PATH \
+\
+&& docker-php-source extract \
+&& docker-php-ext-configure oci8 --with-oci8=instantclient,${ORACLE_HOME},12.1 \
+&& docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,${ORACLE_HOME},12.1 \
+&& docker-php-ext-install -j"$(getconf _NPROCESSORS_ONLN)" bcmath exif intl gd oci8 pdo_oci \
+&& docker-php-ext-enable bcmath exif intl gd oci8 pdo_oci \
+&& docker-php-source delete \
+&& curl -fsSL https://getcomposer.org/installer | php \
+&& find / -name "composer.phar" -exec mv -fv {} /usr/local/bin/composer \; \
+&& chmod +x /usr/local/bin/composer \
+&& composer config --global http-basic.gitlab.com ___token___ UxTd434L7z5YyPyqmxYf
+
+# Use the default production configuration
+# RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# Override with custom oci8 settings
+# COPY config/oci8.ini $PHP_INI_DIR/conf.d/
+# COPY config/pdo_oci.ini $PHP_INI_DIR/conf.d/

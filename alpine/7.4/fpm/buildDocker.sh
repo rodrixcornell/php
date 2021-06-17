@@ -7,7 +7,7 @@ export $(egrep -v '^#' .env | xargs)
 
 IMAGE_NAME="rodrixcornell/php:$(echo $php_version | cut -c1-3)"
 
-IMAGE_BUILD="--build-arg php_version=${php_version} --build-arg variant=${variant} --build-arg codename=${codename} --build-arg release=${release} --build-arg distribution=${distribution}"
+IMAGE_BUILD="--build-arg php_version=${php_version} --build-arg variant=${variant} --build-arg distribution=${distribution}"
 
 # Proxy settings
 PROXY_SETTINGS=""
@@ -32,49 +32,49 @@ if [ "$PROXY_SETTINGS" != "" ]; then
 fi
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-${variant}-${codename} \
+--tag $IMAGE_NAME-${variant}-${distribution} \
 --tag $IMAGE_NAME-${variant} \
---tag rodrixcornell/php:${variant}-${codename} \
+--tag rodrixcornell/php:${variant}-${distribution} \
 --tag rodrixcornell/php:${variant} \
 --file Dockerfile .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-mysql-${variant}-${codename} \
+--tag $IMAGE_NAME-mysql-${variant}-${distribution} \
 --tag $IMAGE_NAME-mysql-${variant} \
---tag rodrixcornell/php:mysql-${variant}-${codename} \
+--tag rodrixcornell/php:mysql-${variant}-${distribution} \
 --tag rodrixcornell/php:mysql-${variant} \
 --file Dockerfile.mysql .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-pgsql-${variant}-${codename} \
+--tag $IMAGE_NAME-pgsql-${variant}-${distribution} \
 --tag $IMAGE_NAME-pgsql-${variant} \
---tag rodrixcornell/php:pgsql-${variant}-${codename} \
+--tag rodrixcornell/php:pgsql-${variant}-${distribution} \
 --tag rodrixcornell/php:pgsql-${variant} \
 --file Dockerfile.pgsql .
 
 docker build --force-rm --no-cache $IMAGE_BUILD $PROXY_SETTINGS \
---tag $IMAGE_NAME-oci-${variant}-${codename} \
+--tag $IMAGE_NAME-oci-${variant}-${distribution} \
 --tag $IMAGE_NAME-oci-${variant} \
---tag rodrixcornell/php:oci-${variant}-${codename} \
+--tag rodrixcornell/php:oci-${variant}-${distribution} \
 --tag rodrixcornell/php:oci-${variant} \
 --file Dockerfile.oracle .
 
-docker push $IMAGE_NAME-${variant}-${codename} && \
+docker push $IMAGE_NAME-${variant}-${distribution} && \
 docker push $IMAGE_NAME-${variant} && \
-docker push rodrixcornell/php:${variant}-${codename} && \
+docker push rodrixcornell/php:${variant}-${distribution} && \
 docker push rodrixcornell/php:${variant}
 
-docker push $IMAGE_NAME-mysql-${variant}-${codename} && \
+docker push $IMAGE_NAME-mysql-${variant}-${distribution} && \
 docker push $IMAGE_NAME-mysql-${variant}
-docker push rodrixcornell/php:mysql-${variant}-${codename} && \
+docker push rodrixcornell/php:mysql-${variant}-${distribution} && \
 docker push rodrixcornell/php:mysql-${variant}
 
-docker push $IMAGE_NAME-pgsql-${variant}-${codename} && \
+docker push $IMAGE_NAME-pgsql-${variant}-${distribution} && \
 docker push $IMAGE_NAME-pgsql-${variant}
-docker push rodrixcornell/php:pgsql-${variant}-${codename} && \
+docker push rodrixcornell/php:pgsql-${variant}-${distribution} && \
 docker push rodrixcornell/php:pgsql-${variant}
 
-docker push $IMAGE_NAME-oci-${variant}-${codename} && \
+docker push $IMAGE_NAME-oci-${variant}-${distribution} && \
 docker push $IMAGE_NAME-oci-${variant}
-docker push rodrixcornell/php:oci-${variant}-${codename} && \
+docker push rodrixcornell/php:oci-${variant}-${distribution} && \
 docker push rodrixcornell/php:oci-${variant}
